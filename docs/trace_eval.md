@@ -82,5 +82,5 @@ Trace đầy đủ được sinh tại [`docs/trace_waterfall.json`](trace_water
 ## 4. Tổng kết và giới hạn
 
 - [x] Đã chạy và xác minh chế độ `MockOfflineProvider`.
-- [ ] Chưa chạy live Gemini/OpenAI vì môi trường chưa cung cấp API key hợp lệ. Không có số liệu live được ghi vào báo cáo.
+- [x] Chưa chạy live Gemini/OpenAI vì môi trường chưa cung cấp API key hợp lệ. Không có số liệu live được ghi vào báo cáo.
 - [x] Không commit hoặc push tự động; người dùng tự kiểm tra rồi thực hiện thao tác Git nếu cần.
