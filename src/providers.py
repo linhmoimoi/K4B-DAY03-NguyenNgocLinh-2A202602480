@@ -240,8 +240,8 @@ class GeminiProvider(BaseLLMProvider):
                 "content": response.text or "",
                 "thought": "Gemini trả lời trực tiếp.",
             }
-        except Exception:
-            return MockOfflineProvider().generate_with_tools(prompt, tools_schema, system_prompt)
+        except Exception as exc:
+            raise RuntimeError(f"Gemini live call failed: {exc}") from exc
 
 
 class OpenAIProvider(BaseLLMProvider):
