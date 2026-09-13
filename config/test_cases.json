@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TC01",
+    "type": "direct_query",
+    "question": "Bạn có thể giới thiệu ngắn gọn trợ lý dịch vụ khách hàng VinBus trong bài lab không?",
+    "expected_behavior": "Agent trả lời trực tiếp, không gọi tool; nêu rõ dữ liệu VinBus là mock/offline.",
+    "complexity": "Low"
+  },
+  {
+    "id": "TC02",
+    "type": "single_tool_query",
+    "question": "Hãy tra cứu lộ trình VinBus từ KĐT Ocean Park đến Bến xe Mỹ Đình.",
+    "expected_behavior": "Agent chỉ gọi bus_route_query với origin và destination; trả về tuyến E01, các điểm dừng và trạng thái dữ liệu offline/mock.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC03",
+    "type": "single_tool_registration",
+    "question": "Đăng ký vé tháng VinBus cho Nguyễn Ngọc Linh, số điện thoại 0901234567, tuyến E01, bắt đầu ngày 2026-09-15.",
+    "expected_behavior": "Agent chỉ gọi register_monthly_pass với đủ customer_name, phone, route_id và start_date.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC04",
+    "type": "multi_step_reasoning",
+    "question": "Hãy tra cứu lộ trình VinBus từ KĐT Ocean Park đến Bến xe Mỹ Đình, rồi đăng ký vé tháng cho Nguyễn Ngọc Linh, số điện thoại 0901234567, bắt đầu ngày 2026-09-15.",
+    "expected_behavior": "Agent gọi bus_route_query trước, kiểm tra route_id E01 trong observation, sau đó gọi register_monthly_pass và tổng hợp kết quả.",
+    "complexity": "High"
+  },
+  {
+    "id": "TC05",
+    "type": "edge_case_not_found",
+    "question": "Hãy tra cứu tuyến VinBus từ KĐT Ocean Park đến Landmark 81.",
+    "expected_behavior": "Agent nhận NOT_FOUND từ bus_route_query, dừng chuỗi phụ thuộc và không bịa route_id, điểm dừng hoặc lịch chạy.",
+    "complexity": "Medium"
+  }
+]

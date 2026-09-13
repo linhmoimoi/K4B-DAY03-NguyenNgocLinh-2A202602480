@@ -1,60 +1,86 @@
-# 📊 BÁO CÁO THU HOẠCH NGHIỆM THU BÀI LAB 3 (BƯỚC 3 — SUBMISSION ARTIFACT)
+# 📊 BÁO CÁO THU HOẠCH NGHIỆM THU BÀI LAB 3
 
-> **Họ và Tên Học viên:** [Điền Họ và Tên]  
-> **Mã Sinh Viên / Mã Học viên:** [Điền MSSV]  
-> **Chủ đề Lựa chọn:** [Điền tên chủ đề đã chọn từ docs/DANH_SACH_DE_TAI.md hoặc Đề tài Mở]  
+> **Họ và Tên Học viên:** Nguyễn Ngọc Linh
+> **Mã Sinh Viên / Mã Học viên:** 2A202602480
+> **Chủ đề:** Trợ lý Dịch vụ Khách hàng VinBus: tra cứu lộ trình tuyến xe bus điện và đăng ký vé tháng.
 
----
+## 1. Agentic Fit Scoring Matrix
 
-## 1. BẢNG CHẤM ĐIỂM AGENTIC FIT SCORING MATRIX (ĐÁNH GIÁ CHỦ ĐỀ)
+Phạm vi dữ liệu VinBus trong bài là `mock_offline`, được khai báo trong kết quả
+tool bằng `data_source`; đây không phải dữ liệu vận hành live của VinBus.
 
-| Tiêu chí Đánh giá | Mức độ (1 - 5) | Giải trình chi tiết lý do chọn điểm |
+| Tiêu chí | Điểm | Giải trình |
 | :--- | :---: | :--- |
-| **1. Multi-step Reasoning** | / 5 | Bài toán có yêu cầu chia nhỏ nhiều bước suy luận nối tiếp nhau không? |
-| **2. Tool Interaction** | / 5 | Hệ thống có cần kết nối với MCP Server / Cơ sở dữ liệu bên ngoài không? |
-| **3. Dynamic Decision** | / 5 | Bước tiếp theo có phụ thuộc vào kết quả quan sát bước trước không? |
-| **4. Long Horizon Goal** | / 5 | Hệ thống có phải giữ mục tiêu xuyên suốt qua nhiều lượt xử lý không? |
-| **TỔNG ĐIỂM AGENTIC FIT** | **/ 20** | *Nếu tổng điểm > 12/20: Bài toán rất phù hợp triển khai Agentic System.* |
+| Multi-step Reasoning | 5/5 | TC04 phải tra cứu tuyến trước, đọc route_id từ observation rồi mới đăng ký vé tháng. |
+| Tool Interaction | 5/5 | Agent dùng MCP Server để gọi `bus_route_query` và `register_monthly_pass`; dữ liệu được lấy từ mock database. |
+| Dynamic Decision | 5/5 | Chỉ đăng ký khi tra cứu trả về `SUCCESS`; với `NOT_FOUND`, Agent dừng và báo đúng lỗi. |
+| Long Horizon Goal | 4/5 | Mục tiêu đăng ký được giữ qua nhiều vòng ReAct; bài lab có tối đa 5 bước, chưa triển khai memory dài hạn. |
+| **Tổng điểm Agentic Fit** | **19/20** | Chủ đề phù hợp để minh họa ReAct Agent. |
 
----
+## 2. Tool schema và dữ liệu demo
 
-## 2. TRÍCH XUẤT KẾT QUẢ WATERFALL TRACE LOG (SAU KHI CHẠY TEST SUITE TRÊN API THẬT)
+- `bus_route_query(origin, destination, route_id?)`: trả `route_id`, các điểm dừng, giờ hoạt động, tần suất và `data_source`.
+- `register_monthly_pass(customer_name, phone, route_id, start_date)`: trả `registration_id`, trạng thái và thời hạn vé.
+- Baseline vẫn giữ `academic_query` và `schedule_appointment`.
+- Tuyến hợp lệ trong mock database: `E01`, từ `KĐT Ocean Park` đến `Bến xe Mỹ Đình`.
+- Điểm đầu/cuối E01 được đối chiếu với [mạng lưới tuyến VinBus](https://vinbus.vn/gioi-thieu/mang-luoi-tuyen). Danh sách điểm đi qua trong mock được tổng hợp từ [nguồn lộ trình chi tiết do người dùng cung cấp](https://meyreal.com/chi-tiet-lo-trinh-cac-tuyen-xe-buyt-vinbus-ha-noi/); giờ chạy và tần suất được để là chưa có dữ liệu live.
 
-> ⚠️ **YÊU CẦU NGHIỆM THU:** Mở tệp `.env` điền `GEMINI_API_KEY` (hoặc `OPENAI_API_KEY`) để kết nối LLM thật trước khi thực thi `python src/app.py --all`. Bài nộp chỉ dùng Mock Offline Provider sẽ không đạt điểm nghiệm thực tế.
+## 3. Kết quả chạy offline/mock
 
-Dán 1 đoạn trích xuất log tiêu biểu từ file `docs/trace_waterfall.json` sinh ra từ phản hồi LLM API thật:
+Đã chạy `python src/app.py --all` với đủ **5/5 test case** và tổng cộng **5 lượt gọi tool qua MCP**:
+
+| Test | Kết quả | Chuỗi tool |
+| :--- | :--- | :--- |
+| TC01 | PASS | Không gọi tool; trả lời trực tiếp và nêu phạm vi mock/offline. |
+| TC02 | PASS | `bus_route_query` → `SUCCESS` với `E01`. |
+| TC03 | PASS | `register_monthly_pass` → `SUCCESS`, mã `VP-E01-20260915-4567`. |
+| TC04 | PASS | `bus_route_query` → `SUCCESS` → `register_monthly_pass` → `SUCCESS`. |
+| TC05 | PASS | `bus_route_query` cho Ocean Park → Landmark 81 → `NOT_FOUND`; không đăng ký và không bịa dữ liệu. |
+
+Trace đầy đủ được sinh tại [`docs/trace_waterfall.json`](trace_waterfall.json), gồm 10 sự kiện với các trường query, step, thought, action_type, tool_name, arguments, observation, output và latency_ms.
+
+### Trích đoạn trace thực tế từ TC04
 
 ```json
 [
   {
     "step": 1,
     "action_type": "TOOL_EXECUTION",
-    "tool_name": "academic_query",
+    "tool_name": "bus_route_query",
     "arguments": {
-      "student_id": "SV2026001"
+      "origin": "KĐT Ocean Park",
+      "destination": "Bến xe Mỹ Đình"
     },
     "observation": {
       "status": "SUCCESS",
-      "student_id": "SV2026001",
-      "data": {
-        "full_name": "Nguyễn Văn An",
-        "gpa": 3.85
-      }
+      "route_id": "E01",
+      "stops": ["KĐT Ocean Park", "Lý Thánh Tông", "Cổ Linh", "Đàm Quang Trung", "Cầu Vĩnh Tuy", "Minh Khai", "Đại La", "Trường Chinh", "Nguyễn Trãi", "Khuất Duy Tiến", "Phạm Hùng", "Bến xe Mỹ Đình"]
     },
-    "latency_ms": 120.5
+    "latency_ms": 0.03
+  },
+  {
+    "step": 2,
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "register_monthly_pass",
+    "arguments": {
+      "customer_name": "Nguyễn Ngọc Linh",
+      "phone": "0901234567",
+      "route_id": "E01",
+      "start_date": "2026-09-15"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "registration_id": "VP-E01-20260915-4567",
+      "valid_from": "2026-09-15",
+      "valid_until": "2026-10-14"
+    },
+    "latency_ms": 0.07
   }
 ]
 ```
 
----
+## 4. Tổng kết và giới hạn
 
-## 3. TỔNG KẾT KẾT QUẢ NGHIỆM THU & NỘP BÀI
-
-- [ ] Đã điền API Key thật trong `.env` và xác nhận Agent chạy mượt mà trên LLM API thật (Gemini/OpenAI).
-- **Tổng số Test Cases đã chạy thành công:** ___ / 5 test cases.
-- **Số lượt gọi Tool qua MCP Server chính xác:** ___ lượt.
-- **Kết quả đẩy Repo nộp bài:** [ ] Đã Commit và Push mã nguồn thành công lên GitHub cá nhân.
-
----
-
-> ✅ **HOÀN TẤT NỘP BÀI:** Sao chép đường link GitHub Repository cá nhân của bạn và dán vào ô nộp bài trên hệ thống LMS VLearn để hoàn tất Bài Lab 3!
+- [x] Đã chạy và xác minh chế độ `MockOfflineProvider`.
+- [ ] Chưa chạy live Gemini/OpenAI vì môi trường chưa cung cấp API key hợp lệ. Không có số liệu live được ghi vào báo cáo.
+- [x] Không commit hoặc push tự động; người dùng tự kiểm tra rồi thực hiện thao tác Git nếu cần.

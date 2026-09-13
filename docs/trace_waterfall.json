@@ -1,29 +1,246 @@
 [
   {
     "step": 1,
-    "query": "Chào bạn, bạn có thể giới thiệu quy chế học vụ cơ bản của Đại học VinUni không?",
+    "query": "Bạn có thể giới thiệu ngắn gọn trợ lý dịch vụ khách hàng VinBus trong bài lab không?",
+    "thought": "Câu hỏi chung có thể trả lời trực tiếp, không cần gọi tool.",
     "action_type": "FINAL_ANSWER",
-    "thought": "Câu hỏi chung về quy chế học vụ, trả lời trực tiếp không cần gọi Tool.",
-    "output": "[Mock Agent Response]: Xin chào! Quy chế học vụ VinUni yêu cầu sinh viên tích lũy tối thiểu 120 tín chỉ và duy trì GPA trên 2.0 để tốt nghiệp.",
-    "latency_ms": 2845.93
+    "tool_name": null,
+    "arguments": {},
+    "observation": {},
+    "output": "VinBus trong bài lab hỗ trợ tra cứu tuyến và đăng ký vé tháng. Dữ liệu vận hành hiện là mock/offline; hãy cung cấp điểm đi, điểm đến hoặc thông tin đăng ký đầy đủ nếu cần thao tác.",
+    "latency_ms": 2674.91
   },
   {
     "step": 1,
-    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "query": "Hãy tra cứu lộ trình VinBus từ KĐT Ocean Park đến Bến xe Mỹ Đình.",
+    "thought": "Cần tra cứu tuyến VinBus trước để xác nhận route_id và các điểm dừng.",
     "action_type": "TOOL_EXECUTION",
-    "tool_name": "academic_query",
+    "tool_name": "bus_route_query",
     "arguments": {
-      "student_id": "SV2026001"
+      "origin": "KĐT Ocean Park",
+      "destination": "Bến xe Mỹ Đình"
     },
-    "observation": {},
-    "latency_ms": 799.12
+    "observation": {
+      "data_source": "mock_offline_based_on_public_route",
+      "destination": "Bến xe Mỹ Đình",
+      "frequency_minutes": null,
+      "operating_hours": "Chưa tích hợp dữ liệu vận hành thời gian thực",
+      "origin": "KĐT Ocean Park",
+      "route_id": "E01",
+      "route_reference": "https://vinbus.vn/gioi-thieu/mang-luoi-tuyen",
+      "status": "SUCCESS",
+      "stops": [
+        "KĐT Ocean Park",
+        "Lý Thánh Tông",
+        "Cổ Linh",
+        "Đàm Quang Trung",
+        "Cầu Vĩnh Tuy",
+        "Minh Khai",
+        "Đại La",
+        "Trường Chinh",
+        "Nguyễn Trãi",
+        "Khuất Duy Tiến",
+        "Phạm Hùng",
+        "Bến xe Mỹ Đình"
+      ]
+    },
+    "output": "",
+    "latency_ms": 909.29
   },
   {
     "step": 2,
-    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "query": "Hãy tra cứu lộ trình VinBus từ KĐT Ocean Park đến Bến xe Mỹ Đình.",
+    "thought": "Observation tuyến hợp lệ đã đủ để trả lời yêu cầu tra cứu.",
     "action_type": "FINAL_ANSWER",
-    "thought": "Tổng hợp kết quả từ MCP Server thành công.",
-    "output": "Chưa thể trả lời chi tiết do chưa nhận được dữ liệu từ MCP Server (hãy hoàn thành TODO 2.1).",
-    "latency_ms": 10.0
+    "tool_name": null,
+    "arguments": {},
+    "observation": {
+      "data_source": "mock_offline_based_on_public_route",
+      "destination": "Bến xe Mỹ Đình",
+      "frequency_minutes": null,
+      "operating_hours": "Chưa tích hợp dữ liệu vận hành thời gian thực",
+      "origin": "KĐT Ocean Park",
+      "route_id": "E01",
+      "route_reference": "https://vinbus.vn/gioi-thieu/mang-luoi-tuyen",
+      "status": "SUCCESS",
+      "stops": [
+        "KĐT Ocean Park",
+        "Lý Thánh Tông",
+        "Cổ Linh",
+        "Đàm Quang Trung",
+        "Cầu Vĩnh Tuy",
+        "Minh Khai",
+        "Đại La",
+        "Trường Chinh",
+        "Nguyễn Trãi",
+        "Khuất Duy Tiến",
+        "Phạm Hùng",
+        "Bến xe Mỹ Đình"
+      ]
+    },
+    "output": "Tuyến E01: KĐT Ocean Park → Bến xe Mỹ Đình; điểm dừng: KĐT Ocean Park → Lý Thánh Tông → Cổ Linh → Đàm Quang Trung → Cầu Vĩnh Tuy → Minh Khai → Đại La → Trường Chinh → Nguyễn Trãi → Khuất Duy Tiến → Phạm Hùng → Bến xe Mỹ Đình; giờ hoạt động: Chưa tích hợp dữ liệu vận hành thời gian thực; tần suất: chưa có dữ liệu live.",
+    "latency_ms": 919.27
+  },
+  {
+    "step": 1,
+    "query": "Đăng ký vé tháng VinBus cho Nguyễn Ngọc Linh, số điện thoại 0901234567, tuyến E01, bắt đầu ngày 2026-09-15.",
+    "thought": "Người dùng yêu cầu đăng ký vé tháng với thông tin đã cung cấp.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "register_monthly_pass",
+    "arguments": {
+      "customer_name": "Nguyễn Ngọc Linh",
+      "phone": "0901234567",
+      "route_id": "E01",
+      "start_date": "2026-09-15"
+    },
+    "observation": {
+      "customer_name": "Nguyễn Ngọc Linh",
+      "data_source": "mock_offline",
+      "phone": "0901234567",
+      "registration_id": "VP-E01-20260915-4567",
+      "route_id": "E01",
+      "status": "SUCCESS",
+      "valid_from": "2026-09-15",
+      "valid_until": "2026-10-14"
+    },
+    "output": "",
+    "latency_ms": 921.41
+  },
+  {
+    "step": 2,
+    "query": "Đăng ký vé tháng VinBus cho Nguyễn Ngọc Linh, số điện thoại 0901234567, tuyến E01, bắt đầu ngày 2026-09-15.",
+    "thought": "Đã có registration_id trong observation, tổng hợp câu trả lời cuối.",
+    "action_type": "FINAL_ANSWER",
+    "tool_name": null,
+    "arguments": {},
+    "observation": {
+      "customer_name": "Nguyễn Ngọc Linh",
+      "data_source": "mock_offline",
+      "phone": "0901234567",
+      "registration_id": "VP-E01-20260915-4567",
+      "route_id": "E01",
+      "status": "SUCCESS",
+      "valid_from": "2026-09-15",
+      "valid_until": "2026-10-14"
+    },
+    "output": "Đăng ký vé tháng thành công. Mã đăng ký: VP-E01-20260915-4567; khách hàng: Nguyễn Ngọc Linh; tuyến: E01; hiệu lực từ 2026-09-15 đến 2026-10-14.",
+    "latency_ms": 917.52
+  },
+  {
+    "step": 1,
+    "query": "Hãy tra cứu lộ trình VinBus từ KĐT Ocean Park đến Bến xe Mỹ Đình, rồi đăng ký vé tháng cho Nguyễn Ngọc Linh, số điện thoại 0901234567, bắt đầu ngày 2026-09-15.",
+    "thought": "Cần tra cứu tuyến VinBus trước để xác nhận route_id và các điểm dừng.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "bus_route_query",
+    "arguments": {
+      "origin": "KĐT Ocean Park",
+      "destination": "Bến xe Mỹ Đình"
+    },
+    "observation": {
+      "data_source": "mock_offline_based_on_public_route",
+      "destination": "Bến xe Mỹ Đình",
+      "frequency_minutes": null,
+      "operating_hours": "Chưa tích hợp dữ liệu vận hành thời gian thực",
+      "origin": "KĐT Ocean Park",
+      "route_id": "E01",
+      "route_reference": "https://vinbus.vn/gioi-thieu/mang-luoi-tuyen",
+      "status": "SUCCESS",
+      "stops": [
+        "KĐT Ocean Park",
+        "Lý Thánh Tông",
+        "Cổ Linh",
+        "Đàm Quang Trung",
+        "Cầu Vĩnh Tuy",
+        "Minh Khai",
+        "Đại La",
+        "Trường Chinh",
+        "Nguyễn Trãi",
+        "Khuất Duy Tiến",
+        "Phạm Hùng",
+        "Bến xe Mỹ Đình"
+      ]
+    },
+    "output": "",
+    "latency_ms": 922.65
+  },
+  {
+    "step": 2,
+    "query": "Hãy tra cứu lộ trình VinBus từ KĐT Ocean Park đến Bến xe Mỹ Đình, rồi đăng ký vé tháng cho Nguyễn Ngọc Linh, số điện thoại 0901234567, bắt đầu ngày 2026-09-15.",
+    "thought": "Tuyến đã hợp lệ trong observation; tiếp tục đăng ký vé tháng bằng route_id đó.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "register_monthly_pass",
+    "arguments": {
+      "customer_name": "Nguyễn Ngọc Linh",
+      "phone": "0901234567",
+      "route_id": "E01",
+      "start_date": "2026-09-15"
+    },
+    "observation": {
+      "customer_name": "Nguyễn Ngọc Linh",
+      "data_source": "mock_offline",
+      "phone": "0901234567",
+      "registration_id": "VP-E01-20260915-4567",
+      "route_id": "E01",
+      "status": "SUCCESS",
+      "valid_from": "2026-09-15",
+      "valid_until": "2026-10-14"
+    },
+    "output": "",
+    "latency_ms": 921.77
+  },
+  {
+    "step": 3,
+    "query": "Hãy tra cứu lộ trình VinBus từ KĐT Ocean Park đến Bến xe Mỹ Đình, rồi đăng ký vé tháng cho Nguyễn Ngọc Linh, số điện thoại 0901234567, bắt đầu ngày 2026-09-15.",
+    "thought": "Đã có registration_id trong observation, tổng hợp câu trả lời cuối.",
+    "action_type": "FINAL_ANSWER",
+    "tool_name": null,
+    "arguments": {},
+    "observation": {
+      "customer_name": "Nguyễn Ngọc Linh",
+      "data_source": "mock_offline",
+      "phone": "0901234567",
+      "registration_id": "VP-E01-20260915-4567",
+      "route_id": "E01",
+      "status": "SUCCESS",
+      "valid_from": "2026-09-15",
+      "valid_until": "2026-10-14"
+    },
+    "output": "Tuyến E01: KĐT Ocean Park → Bến xe Mỹ Đình; điểm dừng: KĐT Ocean Park → Lý Thánh Tông → Cổ Linh → Đàm Quang Trung → Cầu Vĩnh Tuy → Minh Khai → Đại La → Trường Chinh → Nguyễn Trãi → Khuất Duy Tiến → Phạm Hùng → Bến xe Mỹ Đình; giờ hoạt động: Chưa tích hợp dữ liệu vận hành thời gian thực; tần suất: chưa có dữ liệu live. Đăng ký vé tháng thành công. Mã đăng ký: VP-E01-20260915-4567; khách hàng: Nguyễn Ngọc Linh; tuyến: E01; hiệu lực từ 2026-09-15 đến 2026-10-14.",
+    "latency_ms": 1031.85
+  },
+  {
+    "step": 1,
+    "query": "Hãy tra cứu tuyến VinBus từ KĐT Ocean Park đến Landmark 81.",
+    "thought": "Cần tra cứu tuyến VinBus trước để xác nhận route_id và các điểm dừng.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "bus_route_query",
+    "arguments": {
+      "origin": "KĐT Ocean Park",
+      "destination": "Landmark 81"
+    },
+    "observation": {
+      "destination": "Landmark 81",
+      "message": "Không tìm thấy tuyến VinBus phù hợp trong dữ liệu demo offline.",
+      "origin": "KĐT Ocean Park",
+      "status": "NOT_FOUND"
+    },
+    "output": "",
+    "latency_ms": 1318.85
+  },
+  {
+    "step": 2,
+    "query": "Hãy tra cứu tuyến VinBus từ KĐT Ocean Park đến Landmark 81.",
+    "thought": "Observation không thành công nên dừng chuỗi hành động phụ thuộc.",
+    "action_type": "FINAL_ANSWER",
+    "tool_name": null,
+    "arguments": {},
+    "observation": {
+      "destination": "Landmark 81",
+      "message": "Không tìm thấy tuyến VinBus phù hợp trong dữ liệu demo offline.",
+      "origin": "KĐT Ocean Park",
+      "status": "NOT_FOUND"
+    },
+    "output": "Không tìm thấy tuyến VinBus phù hợp trong dữ liệu demo offline.",
+    "latency_ms": 1026.04
   }
 ]
